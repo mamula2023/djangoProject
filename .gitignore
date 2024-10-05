@@ -1,1 +1,3 @@
 .idea
+**/__pycache__/
+djangoProject/__pycache__/*g
