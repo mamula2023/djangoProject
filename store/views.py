@@ -6,22 +6,6 @@ from store.models import Category, Product
 
 
 # Create your views here.
-def index(request):
-    result = {"count": 245,
-              "categories": categories
-              }
-
-    return HttpResponse(json.dumps(result))
-
-
-def item(request, item_id):
-    result = {}
-    fake = faker.Faker()
-    result["price"] = fake.pricetag()
-    result["item"] = fake.word()
-    return HttpResponse(json.dumps(result))
-
-
 def categories(request):
     cats = Category.objects.all()
     print(cats)
