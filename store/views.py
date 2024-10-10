@@ -1,3 +1,5 @@
+from curses.ascii import isblank
+
 from django.http import HttpResponse, JsonResponse
 import faker
 import json
@@ -7,11 +9,23 @@ from store.models import Category, Product
 
 # Create your views here.
 def categories(request):
-    cats = Category.objects.all()
-    print(cats)
+    cats = list(Category.objects.all().values())
+
+    result = []
+
+    for cat in cats:
+        category = {'name': cat['name'], 'id': cat['id']}
+        parent_id = cat['parent_category_id']
+        try:
+            parent = Category.objects.get(id=parent_id)
+            category['parent'] = parent.name
+        except Category.DoesNotExist:
+            category['parent'] = None
+
+        result.append(category)
     return JsonResponse(
         {
-            'categories': list(cats.values('id', 'name', 'parent_category_id', 'parent_category__name')),
+            'categories': result
         })
 
 
@@ -21,6 +35,7 @@ def products(request):
     for prod in prods:
         prod_obj = Product.objects.get(id=prod['id'])
         cats = prod_obj.categories.all()
+
         prod['categories'] = list(cats.values())
         result.append(prod)
 
