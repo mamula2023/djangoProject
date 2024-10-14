@@ -4,6 +4,8 @@ from django.http import HttpResponse, JsonResponse
 import faker
 import json
 
+from django.shortcuts import render
+
 from store.models import Category, Product
 
 
@@ -40,3 +42,9 @@ def products(request):
         result.append(prod)
 
     return JsonResponse({'products': result})
+
+
+def category(request):
+    cats = Category.objects.select_related()
+
+    return render(request, 'category_listing.html', {'categories': cats.values()})

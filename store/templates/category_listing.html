@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<ul>
+    {%  for cat in categories %}
+        {% if cat.parent_category_id is None %}
+            <li>
+                <a href="{{ cat.id }}/products">{{ cat.name }}</a>
+
+            </li>
+
+        {% endif %}
+
+    {% endfor %}
+</ul>
+
+</body>
+</html>
