@@ -42,12 +42,29 @@ def products(request):
 
 
 def category(request):
+    """
+    displays all categories that have no parent category -> are top level categories
+
+    First, all category objects are loaded here and then
+    categories with parents are filtered in template file (category_listing.html)
+    """
     cats = Category.objects.all()
 
     return render(request, 'category_listing.html', {'categories': cats.values()})
 
 
 def category_products(request, category_id):
+    """
+    list all products in category and its subcategories
+
+    does it job by
+    1. fetching all categories with prefetched products
+    2. in bfs-like algorithm getting all categories that are descendants category_id
+    3. for each category in bfs, all unique products are processed
+
+    Because products are not in single dataset, I could not use aggregators and annotations and
+    calculated statistics manually
+    """
     result = {}
 
     all_categories = Category.objects.prefetch_related('products')
@@ -70,7 +87,7 @@ def category_products(request, category_id):
                 children.append(cat)
 
         for child in children:
-            prods = child.products.all() #.annotate(total=F('stock')*F('price'))
+            prods = child.products.all()
             for prod in prods:
                 if prod not in result:
                     result[prod] = prod.price * prod.stock
@@ -83,36 +100,29 @@ def category_products(request, category_id):
                     total_value += prod.stock * prod.price
             cats_queue.append(child.id)
 
-
+    if len(result) <= 0:
+        most_expensive = "NaN"
+        cheapest = "NaN"
+        total_price = "NaN"
+        total_value = "NaN"
+    else:
+        total_price = total_price / len(result)
 
     return render(request, 'category_products.html',
                   {'products': result,
                    'most_expensive': most_expensive,
                    'cheapest': cheapest,
                    'total_value': total_value,
-                   'avg_price': total_price/len(result)}
+                   'avg_price': total_price
+                   }
 
                   )
 
 
-
-
-
-
-
-
-    # prods = (Product.objects.prefetch_related('categories')
-    #          .annotate(total=F('stock')*F('price')).values())
-    #
-    # expensive_price = prods.aggregate(max_price=Max('price'))['max_price']
-    # cheap_price = prods.aggregate(min_price=Min('price'))['min_price']
-    # avg_price = prods.aggregate(avg_price=Avg('price'))['avg_price']
-    # total_price = prods.aggregate(total=Sum(F('stock')*F('price')))['total']
-
-    # print(total_price)
-# return render(request, 'category_products.html', {'products': result,
-# 'expensive_price': expensive_price,
-# 'cheap_price': cheap_price,
-# 'avg_price': avg_price,
-# 'total_price': total_price
-#        })
+def product(request, product_id):
+    """
+    displays all data for particular product
+    if product does not have image, default no-image.jpg is shown
+    """
+    prod = Product.objects.get(id=product_id)
+    return render(request, 'product_page.html', {'product': prod})
