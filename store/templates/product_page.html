@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <h1>{{ product.title }}</h1>
+    {% if product.image %}
+        <img src="/media/{{ product.image }}" alt="image">
+    {% else %}
+        <img src="/media/images/no_image.jpg" alt="image">
+    {% endif %}
+
+    <p> {{ product.description }}</p>
+
+    <label>price: {{ product.price }}</label><br>
+    <label>in stock: {{ product.stock }}</label>
+
+</div>
+
+</body>
+</html>
