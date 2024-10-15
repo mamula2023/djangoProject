@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style=>
+<div>
+    {% for prod, total in products.items %}
+        <li>
+            <a href="/store/products/{{ prod.id }}">
+                {{ prod }}, total price of stock: {{ total }}
+            </a>
+        </li>
+    {% endfor %}
+</div>
+<div>
+    <ul>
+        <li>
+            Price of the most expensive item: {{ most_expensive }}
+        </li>
+        <li>
+            Price of the cheapest item: {{ cheapest }}
+        </li>
+        <li>
+            Average price: {{ avg_price }}
+        </li>
+        <li>
+            Total price: {{total_value }}
+        </li>
+    </ul>
+</div>
+</body>
+</html>
